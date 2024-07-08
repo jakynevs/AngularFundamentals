@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IProduct } from './product.model';
 import { CartService } from '../cart/cart.service';
 import { ProductService } from './product.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'bot-catalog',
@@ -14,17 +15,23 @@ export class CatalogComponent {
 
   constructor(
     private carSvc: CartService,
-    private productSvc: ProductService
+    private productSvc: ProductService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
     this.productSvc.getProducts().subscribe((products) => {
       this.products = products;
     });
+    this.route.queryParams.subscribe((params) => {
+      this.filter = params['filter'] ?? '';
+    });
   }
 
   addToCart(product: IProduct) {
     this.carSvc.add(product);
+    this.router.navigate(['/cart']);
   }
 
   getDiscountedClasses(product: IProduct) {
